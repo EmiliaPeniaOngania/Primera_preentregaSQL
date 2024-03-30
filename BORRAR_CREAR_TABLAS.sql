@@ -1,44 +1,56 @@
-drop table producto,ventas,caida_prestamos,pagos,incobrabilidad, costos;
+drop table 
+caida_prestamos,
+costos,
+incobrabilidad,
+pagos,
+producto,
+ventas;
 
-create table PRODUCTO (
-PRODUCTO_ID int,
-PERIODO int,
+create table producto (
+PRODUCTO_ID int primary key,
 NOMBRE_PRODUCTO varchar (20));
 
-create table VENTAS (
-PERIODO int,
-N_CLIENTE int ,
-N_PRESTAMO int,
-FECHA_LIQUIDACION date,
+create table costos (
 PRODUCTO_ID int ,
+PERIODO int,
+CONCEPTO varchar(20),
+primary key(CONCEPTO,PERIODO),
+PCIO_PROM_UNIT float,
+foreign key(PRODUCTO_ID) references producto(PRODUCTO_ID));
+	
+create table incobrabilidad (
+ATRASO int primary key ,
+PORCENT_INCOB float);
+
+create table ventas (
+N_CLIENTE int ,
+N_PRESTAMO int primary key,
+FECHA_LIQUIDACION date,
+PRODUCTO_ID int,
 PLAZO int,
 TNA float,
 CAP_FINACIADO float,
-ATRASO int,
-F_ULT_VTO_IMPAGO date);
+ATRASO int ,
+F_ULT_VTO_IMPAGO date,
+foreign key(ATRASO) references incobrabilidad(ATRASO),
+foreign key(PRODUCTO_ID) references producto(PRODUCTO_ID));
 
-create table CAIDA_PRESTAMOS (
-N_PRESTAMO int ,
+create table caida_PRESTAMOS (
+N_PRESTAMO int,
 N_CUOTA int,
+primary key(N_PRESTAMO,N_CUOTA),
 F_VTO date,
 CAPITAL float,
 INTERES float,
-IVA float);
+IVA float,
+foreign key(N_PRESTAMO) references ventas(N_PRESTAMO));
 
 create table PAGOS (
 PERIODO int,
-COMP_PAGO int,
-N_PRESTAMO int ,
+COMP_PAGO int primary key,
+N_PRESTAMO int,
 N_CUOTA int,
 F_PAGO date,
-IMPORTE int);
+IMPORTE int,
+foreign key(N_PRESTAMO) references ventas(N_PRESTAMO));
 
-create table INCOBRABILIDAD (
-ATRASO int ,
-PORCENT_INCOB float);
-
-create table COSTOS (
-PRODUCTO_ID int,
-PERIODO int,
-CONCEPTO varchar(20),
-PCIO_PROM_UNIT float)
